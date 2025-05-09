@@ -1,4 +1,4 @@
 .env
-
+/python_proxy/.env
 # Docker
 /docker-compose.override.yml
