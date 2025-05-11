@@ -1,49 +1,41 @@
+version: '3.9'
+
 services:
   ollama:
-    image: ollama/ollama
-    container_name: ollama
+    image: ollama/ollama:latest
+    container_name: ollama_python
     ports:
       - "11434:11434"
     environment:
       - OLLAMA_MODELS_PATH=/models
     volumes:
       - ollama_models:/models
-    networks:
-      - ai-net
 
   python_ai_proxy:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: python_ai_proxy
     ports:
       - "8000:8000"
-    environment:
-      - PANW_X_PAN_TOKEN=${PANW_X_PAN_TOKEN}
-      - PANW_PROFILE_ID=${PANW_PROFILE_ID}
-      - PANW_PROFILE_NAME=${PANW_PROFILE_NAME}
+    env_file:
+      - .env
     depends_on:
       - ollama
-    networks:
-      - ai-net
 
   openwebui:
     image: ghcr.io/open-webui/open-webui:main
-    container_name: openwebui
+    container_name: openwebui_python
     ports:
       - "8080:8080"
     environment:
       - OLLAMA_API_BASE_URL=http://python_ai_proxy:8000
       - OLLAMA_BASE_URL=http://python_ai_proxy:8000
     depends_on:
-      - rust_ai_proxy
+      - python_ai_proxy
     volumes:
       - openwebui_data:/app/backend/data
-    networks:
-      - ai-net
 
 volumes:
   ollama_models:
   openwebui_data:
-
-networks:
-  ai-net:
-    driver: bridge

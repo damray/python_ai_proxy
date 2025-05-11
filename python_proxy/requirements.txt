@@ -1,4 +1,5 @@
-aiohttp==3.9.3
-fastapi==0.110.0
-uvicorn==0.29.0
-python-dotenv==1.0.1
+fastapi
+uvicorn
+aiohttp
+requests
+python-dotenv
